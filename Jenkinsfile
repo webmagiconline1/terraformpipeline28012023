@@ -12,7 +12,7 @@ pipeline {
         stage('Terraform Plan') {
             steps {
                 script {
-                    def tf_plan_args = "-var-file 'instance_type=${params.environment}'"
+                    def tf_plan_args = "-var-file '${params.environment}'"
                     sh "terraform plan ${tf_plan_args}"
                 }
             }
@@ -20,7 +20,7 @@ pipeline {
         stage('Terraform Apply') {
             steps {
                 script {
-                    def tf_apply_args = "-var-file 'instance_type=${params.environment}'"
+                    def tf_apply_args = "-var-file '${params.environment}'"
                     sh "terraform apply ${tf_apply_args}"
                 }
             }
