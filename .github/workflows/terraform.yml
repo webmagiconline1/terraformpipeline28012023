@@ -1,0 +1,46 @@
+name: Terraform Deployment
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout
+      uses: actions/checkout@v2
+
+    - name: Set up Terraform
+      run: |
+        echo "Setting up Terraform..."
+        wget https://releases.hashicorp.com/terraform/0.15.5/terraform_0.15.5_linux_amd64.zip
+        unzip terraform_0.15.5_linux_amd64.zip
+        sudo mv terraform /usr/local/bin/
+        terraform --version
+
+    - name: Terraform Init
+      run: terraform init
+
+    - name: Terraform Plan
+      id: plan
+      env:
+        TF_VAR_FILE: ${{ inputs.tfvars_file }}
+      run: terraform plan -var-file=$TF_VAR_FILE
+      
+    - name: Terraform Apply
+      if: startsWith(github.event.ref, 'refs/heads/main')
+      env:
+        TF_VAR_FILE: ${{ inputs.tfvars_file }}
+      run: terraform apply -auto-approve -var-file=$TF_VAR_FILE
+      
+inputs:
+- name: environment
+  description: 'The environment to deploy to'
+  required: true
+- name: tfvars_file
+  description: 'The tfvars file to use'
+  required: true
+
