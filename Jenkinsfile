@@ -21,7 +21,7 @@ pipeline {
             steps {
                 script {
                     def tf_apply_args = "-var-file '${params.environment}'"
-                    sh "terraform apply ${tf_apply_args}"
+                    sh "terraform apply --auto-approve ${tf_apply_args}"
                 }
             }
         }
